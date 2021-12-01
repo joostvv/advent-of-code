@@ -1,34 +1,23 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
-	"io/ioutil"
 	"strconv"
 	"strings"
 )
 
-const SamplePath = "input-sample.txt"
-const InputPath = "input.txt"
+//go:embed input.txt
+var input []byte
 
-func ReadFileToStringArray(path string) []string {
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
-		fmt.Println("Can't read file: ", path)
-		panic(err)
-	}
-	lines := strings.Split(string(data), "\n")
-	return lines
-}
+//go:embed input-sample.txt
+var sample []byte
 
-func ReadFileToIntArray(path string) []int {
+func byteArrayToInt(data []byte) []int {
 	var int_data []int
-	data := ReadFileToStringArray(path)
-	for _, s := range data {
-		conv, err := strconv.Atoi(s)
-		if err != nil {
-			fmt.Println("Can't convert value: ", s)
-			panic(err)
-		}
+	lines := strings.Split(string(data), "\n")
+	for _, s := range lines {
+		conv, _ := strconv.Atoi(s)
 		int_data = append(int_data, conv)
 	}
 	return int_data
@@ -36,11 +25,8 @@ func ReadFileToIntArray(path string) []int {
 
 func thatIsDeepMan(data []int) int {
 	count := 0
-	for i, s := range data {
-		if i == 0 {
-			continue
-		}
-		if s > data[i-1] {
+	for i := 1; i < len(data); i++ {
+		if data[i] > data[i-1] {
 			count++
 		}
 	}
@@ -60,7 +46,6 @@ func thatIsDeepManPart2(data []int) int {
 }
 
 func main() {
-	data := ReadFileToIntArray(InputPath)
-	fmt.Println(thatIsDeepMan(data))
-	fmt.Println(thatIsDeepManPart2(data))
+	fmt.Println(thatIsDeepMan(byteArrayToInt(input)))
+	fmt.Println(thatIsDeepManPart2(byteArrayToInt(input)))
 }
