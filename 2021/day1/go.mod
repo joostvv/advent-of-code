@@ -1,3 +1,3 @@
-module day1
+module day1.bin
 
 go 1.17
