@@ -133,5 +133,5 @@ func IHaveToVent(data []byte, width int, diagonal bool) int {
 
 func main() {
 	fmt.Println(IHaveToVent(input, 1000, false))
-	//fmt.Println(IHaveToVent(input, 1000, true))
+	fmt.Println(IHaveToVent(input, 1000, true))
 }
