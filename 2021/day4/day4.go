@@ -139,7 +139,7 @@ func Squidgames(data []byte) int {
 	return 0
 }
 
-// Calculate the winning bingo card and return the winning score.
+// Calculate the losing bingo card and return the winning score.
 func SquidgamesPart2(data []byte) int {
 	values, cards := ParseBingoInput(data)
 	for _, value := range values {
