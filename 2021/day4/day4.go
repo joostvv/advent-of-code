@@ -126,38 +126,34 @@ func removeBingoCard(cards []BingoCard, i int) []BingoCard {
 }
 
 // Calculate the winning bingo card and return the winning score.
-func Squidgames(data []byte) int {
+func Squidgames(data []byte) (int, int) {
+	winning_card, losing_card := 0, 0
 	values, cards := ParseBingoInput(data)
+	winning_bingo_cards := 0
 	for _, value := range values {
 		for i := 0; i < len(cards); i++ {
 			SetValueInCard(&cards[i], value)
 			if Bingo(&cards[i]) {
-				return CalcScore(&cards[i], value)
-			}
-		}
-	}
-	return 0
-}
-
-// Calculate the losing bingo card and return the winning score.
-func SquidgamesPart2(data []byte) int {
-	values, cards := ParseBingoInput(data)
-	for _, value := range values {
-		for i := 0; i < len(cards); i++ {
-			SetValueInCard(&cards[i], value)
-			if Bingo(&cards[i]) {
-				if len(cards) == 1 {
-					return CalcScore(&cards[i], value)
+				// Add the first winning bingo card
+				if winning_bingo_cards == 0 {
+					winning_card = CalcScore(&cards[i], value)
 				}
+				winning_bingo_cards++
+
+				// Return losing_card if it is the last bingo card, otherwise remove the card
+				if len(cards) == 1 {
+					losing_card = CalcScore(&cards[i], value)
+					return winning_card, losing_card
+				}
+
 				cards = removeBingoCard(cards, i)
 				i--
 			}
 		}
 	}
-	return 0
+	return winning_card, losing_card
 }
 
 func main() {
 	fmt.Println(Squidgames(input))
-	fmt.Println(SquidgamesPart2(input))
 }
