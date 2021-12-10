@@ -14,11 +14,11 @@ var input []byte
 //go:embed input-sample.txt
 var sample []byte
 
-func getCrab(data []byte, fish *[]int) {
+func getCrab(data []byte, crab *[]int) {
 	crab_list := strings.Split(string(data), ",")
 	for _, s := range crab_list {
 		conv, _ := strconv.Atoi(s)
-		*fish = append(*fish, conv)
+		*crab = append(*crab, conv)
 	}
 }
 
@@ -40,76 +40,44 @@ func Abs(x int) int {
 	return x
 }
 
-func Sum(input *[]int) int {
+func returnLowest(input *[]int, min int) int {
 	sum := 0
 	for _, s := range *input {
 		sum += s
 	}
-	return sum
-}
-
-func sum(x int) int {
-	if x == 0 {
-		return 0
-	}
-	return x + sum(x-1)
-}
-
-func findLowestDistance2(input *[]int) int {
-	var list = make([]int, len(*input))
-	min := math.MaxInt32
-	max := getHighestCrab(input)
-	for i := 0; i <= max; i++ {
-		for j, value := range *input {
-			list[j] = sum(Abs(value - i))
-		}
-		if dist := Sum(&list); dist < min {
-			min = dist
-		}
+	if sum < min {
+		return sum
 	}
 	return min
 }
 
-func findLowestDistance(input *[]int) int {
-	var list = make([]int, len(*input))
-	min := math.MaxInt32
+func findLowestDistance(input *[]int) (int, int) {
+	var crab_noob = make([]int, len(*input))
+	var crab_engineer = make([]int, len(*input))
+	min_crab_noob := math.MaxInt32
+	min_crab_engineer := math.MaxInt32
 	max := getHighestCrab(input)
 	for i := 0; i <= max; i++ {
 		for j, value := range *input {
-			list[j] = Abs(value - i)
+			crab_noob[j] = Abs(value - i)
+			// sum[n] with n = 1,2,...,n-1, n == n * n+1 / 2
+			crab_engineer[j] = (crab_noob[j] * (crab_noob[j] + 1)) / 2
 		}
-		if dist := Sum(&list); dist < min {
-			min = dist
-		}
+		min_crab_noob = returnLowest(&crab_noob, min_crab_noob)
+		min_crab_engineer = returnLowest(&crab_engineer, min_crab_engineer)
 	}
-	return min
+	return min_crab_noob, min_crab_engineer
 }
 
-func CrabPeople(data []byte) int {
+func CrabPeople(data []byte) (int, int) {
 	var crabs []int
-	// ocean := make([]int, 9)
-	result := 0
 
 	getCrab(data, &crabs)
+	crab_noob, crab_engineer := findLowestDistance(&crabs)
 
-	result = findLowestDistance(&crabs)
-
-	return result
-}
-
-func CrabPeople2(data []byte) int {
-	var crabs []int
-	result := 0
-
-	getCrab(data, &crabs)
-
-	result = findLowestDistance2(&crabs)
-
-	return result
+	return crab_noob, crab_engineer
 }
 
 func main() {
-
 	fmt.Println(CrabPeople(input))
-	fmt.Println(CrabPeople2(input))
 }
