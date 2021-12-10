@@ -58,16 +58,19 @@ func find2And4(signal *[]string) {
 	*signal = twoandfour
 }
 
-func Segments(data []byte) int {
+func Segments(data []byte) (int, int) {
 	var signal, output [][]string
-	result := 0
+	digits_score := 0
+	output_score := 0
 
 	getData(data, &signal, &output)
 
-	for _, out := range output {
-		result += findUniqueSegments(&out)
+	for i, out := range output {
+		find2And4(&signal[i])
+		output_score += decodeOutput(&signal[i], &out)
+		digits_score += findUniqueSegments(&out)
 	}
-	return result
+	return digits_score, output_score
 }
 
 // Decode values 0,6 and 9 which have 6 segment values
@@ -153,20 +156,6 @@ func decodeOutput(twoandfour, output *[]string) int {
 	return sum
 }
 
-func Segments2(data []byte) int {
-	var signal, output [][]string
-	result := 0
-
-	getData(data, &signal, &output)
-
-	for i, out := range output {
-		find2And4(&signal[i])
-		result += decodeOutput(&signal[i], &out)
-	}
-	return result
-}
-
 func main() {
 	fmt.Println(Segments(input))
-	fmt.Println(Segments2(input))
 }
