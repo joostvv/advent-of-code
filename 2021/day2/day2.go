@@ -18,31 +18,20 @@ func byteArrayToString(data []byte) []string {
 	return lines
 }
 
-func wayToGo(data []string) int {
-	x, y := 0, 0
-
-	for i := 0; i < len(data); i++ {
-		values := strings.Fields(data[i])
-		m, _ := strconv.Atoi(values[1])
-		switch values[0] {
-		case "forward":
-			x += m
-		case "down":
-			y -= m
-		case "up":
-			y += m
-
-		}
+// Abs returns the absolute value of x.
+func Abs(x int) int {
+	if x < 0 {
+		return -x
 	}
-	fmt.Println("%d,%d", x, y)
-	return x * y
+	return x
 }
 
-func wayToGo2(data []string) int {
+func wayToGo(data []byte) (int, int) {
 	x, y, aim := 0, 0, 0
+	pointers := byteArrayToString(data)
 
-	for i := 0; i < len(data); i++ {
-		values := strings.Fields(data[i])
+	for i := 0; i < len(pointers); i++ {
+		values := strings.Fields(pointers[i])
 		m, _ := strconv.Atoi(values[1])
 		switch values[0] {
 		case "forward":
@@ -54,10 +43,9 @@ func wayToGo2(data []string) int {
 			aim += m
 		}
 	}
-	fmt.Println("%d,%d", x, y)
-	return x * y
+	return Abs(x * aim), Abs(x * y)
 }
 
 func main() {
-	fmt.Println(wayToGo2(byteArrayToString(input)))
+	fmt.Println(wayToGo(input))
 }
