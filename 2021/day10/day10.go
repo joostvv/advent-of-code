@@ -21,27 +21,26 @@ func getChunks(data []byte, chunk *[][]string) {
 	}
 }
 
-func chunkHasFunc() int {
-	result := 0
+func chunkHasFunc() (int, int) {
+	var incompletes []int
 	var chunks [][]string
-	getChunks(input, &chunks)
-	for _, c := range chunks {
-		result += findError(&c)
-	}
-	return result
-}
+	corrupted_score := 0
 
-func chunkHasFunc2() int {
-	var results []int
-	var chunks [][]string
 	getChunks(input, &chunks)
+
 	for _, c := range chunks {
-		if value := isIncomplete(&c); value > 0 {
-			results = append(results, value)
+		corrupted, incomplete := findError(&c)
+		if incomplete > 0 {
+			incompletes = append(incompletes, incomplete)
 		}
+		corrupted_score += corrupted
 	}
-	sort.Ints(results)
-	return results[len(results)/2]
+
+	// Get middle incomplete score
+	sort.Ints(incompletes)
+	incomplete_score := incompletes[len(incompletes)/2]
+
+	return corrupted_score, incomplete_score
 }
 
 func calcScore(value string) int {
@@ -70,8 +69,8 @@ func remove(s *[]string, i int) {
 	*s = append((*s)[:i], (*s)[i+1:]...)
 }
 
-// Returns if open or closed and the character needed for the close
-func isOpenOrClosed(value string) string {
+// Returns the character corresponding with the closed character, otherwise ""
+func getOpenCharacter(value string) string {
 	switch value {
 	case ")":
 		return "("
@@ -86,50 +85,33 @@ func isOpenOrClosed(value string) string {
 	}
 }
 
-func findError(chunk *[]string) int {
+func findError(chunk *[]string) (int, int) {
 	for i := 1; i < len(*chunk); {
 		value := (*chunk)[i]
-		if close := isOpenOrClosed(value); close != "" {
-			if close != (*chunk)[i-1] {
-				return calcScore(value)
+		// Check if a close character.
+		if open := getOpenCharacter(value); open != "" {
+			// Check if open character matches.
+			if open != (*chunk)[i-1] {
+				return calcScore(value), 0
 			} else {
-				// remove correctly closed parameters
+				// Remove correctly opened and closed parameters.
 				remove(chunk, i-1)
 				remove(chunk, i-1)
-				i = 1
+				i -= 2
 			}
 		} else {
 			i++
 		}
 	}
-	return 0
-}
-
-func isIncomplete(chunk *[]string) int {
-	for i := 1; i < len(*chunk); {
-		value := (*chunk)[i]
-		if close := isOpenOrClosed(value); close != "" {
-			if close != (*chunk)[i-1] {
-				return 0
-			} else {
-				// remove correctly closed parameters
-				remove(chunk, i-1)
-				remove(chunk, i-1)
-				i--
-			}
-		} else {
-			i++
-		}
-	}
+	// Calculate score for the completion strings
 	score := 0
 	for i := len(*chunk) - 1; i >= 0; i-- {
 		score = score * 5
 		score += calcScore((*chunk)[i])
 	}
-	return score
+	return 0, score
 }
 
 func main() {
 	fmt.Println(chunkHasFunc())
-	fmt.Println(chunkHasFunc2())
 }
