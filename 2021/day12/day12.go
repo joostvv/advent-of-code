@@ -81,16 +81,14 @@ func pathFinder(taken_path string, paths map[string][]string, small_caves []stri
 			ways += 1
 			continue
 		}
+		new_total_path := append(total_path, path)
 		if IsLower(path) && stringInSlice(path, small_caves) {
 			new_small_caves := remove(path, small_caves)
-			new_total_path := append(total_path, path)
 			ways += pathFinder(path, paths, new_small_caves, new_total_path)
 		} else if !IsLower(path) {
-			new_total_path := append(total_path, path)
 			ways += pathFinder(path, paths, small_caves, new_total_path)
 		} else if IsLower(path) && stringInSlice("joker", small_caves) && path != "start" {
 			new_small_caves := remove("joker", small_caves)
-			new_total_path := append(total_path, path)
 			ways += pathFinder(path, paths, new_small_caves, new_total_path)
 		}
 	}
