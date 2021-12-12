@@ -20,7 +20,7 @@ var sample2 []byte
 var sample3 []byte
 
 // small caves, caves
-func getPaths(data []byte) (map[string][]string, []string) {
+func getPaths(data []byte, small_cave_twice bool) (map[string][]string, []string) {
 
 	paths := make(map[string][]string)
 	var small_caves []string
@@ -36,6 +36,9 @@ func getPaths(data []byte) (map[string][]string, []string) {
 		if IsLower(path) && path != "start" {
 			small_caves = append(small_caves, path)
 		}
+	}
+	if small_cave_twice {
+		small_caves = append(small_caves, "joker")
 	}
 
 	return paths, small_caves
@@ -85,22 +88,25 @@ func pathFinder(taken_path string, paths map[string][]string, small_caves []stri
 		} else if !IsLower(path) {
 			new_total_path := append(total_path, path)
 			ways += pathFinder(path, paths, small_caves, new_total_path)
+		} else if IsLower(path) && stringInSlice("joker", small_caves) && path != "start" {
+			new_small_caves := remove("joker", small_caves)
+			new_total_path := append(total_path, path)
+			ways += pathFinder(path, paths, new_small_caves, new_total_path)
 		}
 	}
 	return ways
 }
 
-func SecretTunnel(data []byte) int {
+func SecretTunnel(data []byte, small_caves_twice bool) int {
 	ways := 0
 	var total_path []string
 	total_path = append(total_path, "start")
-	paths, small_caves := getPaths(data)
-	// fmt.Print("Input:", paths, small_caves)
+	paths, small_caves := getPaths(data, small_caves_twice)
 	ways += pathFinder("start", paths, small_caves, total_path)
 	return ways
 }
 
 func main() {
-	fmt.Println(SecretTunnel(sample2))
-	// fmt.Println(SecretTunnel(input))
+	fmt.Println(SecretTunnel(input, false))
+	fmt.Println(SecretTunnel(input, true))
 }
