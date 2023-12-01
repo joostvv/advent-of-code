@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "advent-of-code"
+version = "0.1.0"
+description = ""
+authors = ["Joost van Veenhuizen <j.j.vanveenhuizen.01@saxion.nl>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+advent-of-code-data = "^2.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
