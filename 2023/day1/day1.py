@@ -22,7 +22,7 @@ def do_second_part(translations, targets, word):
 
 def do_first_part(translated_word):
     digits = [int(digit) for digit in filter(str.isdigit, translated_word)]
-    return digits[0] * 10 + (digits[0] if len(digits) == 1 else + digits[-1])
+    return digits[0] * 10 + (digits[0] if len(digits) == 1 else digits[-1])
             
 lines = data.splitlines() # type: ignore
 result_a = sum([do_first_part(word) for word in lines])
